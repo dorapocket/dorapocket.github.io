@@ -12,7 +12,7 @@ date: 2021-01-13 21:20:34
 
 WebRTC（Web Real-Time Communication）是为了让开发者在浏览器实现多媒体交换的技术，于2011年被加入W3C规范。当前的支持情况可以见下图。
 
-![](https://lgyserver.top/wp-content/uploads/2021/01/image-1024x486.png)
+![](image-1024x486.png)
 
 WebRTC的核心在于建立PeerConnection实现视频流双端链接，要想理解WebRTC的工作流程，有如下后端服务的概念需要理解：
 
@@ -27,7 +27,7 @@ WebRTC的核心在于建立PeerConnection实现视频流双端链接，要想理
 
 下图展现了WebRTC的工作流程
 
-![](https://lgyserver.top/wp-content/uploads/2021/01/250050215053233.png)
+![](250050215053233.png)
 
 **信令服务器**（图中黄色部分）主要作用是连接建立前的中转工作。需要自行用websocket实现。
 

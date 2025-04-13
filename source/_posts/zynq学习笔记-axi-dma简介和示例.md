@@ -89,7 +89,7 @@ PS I/O外设访问
 
 在传输上，AXI DMA利用AXI Interconnect进行数据传输，如下：
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image.png)
+![](image.png)
 
 DMAController读取数据流向
 
@@ -107,19 +107,19 @@ DMAController读取数据流向
 
 IP Generator -> Create Block Design
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-1.png)
+![](image-1.png)
 
 添加 Zynq IP并Run block Automation
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-2-1024x494.png)
+![](image-2-1024x494.png)
 
 新建AXI DMA IP
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-3-1024x486.png)
+![](image-3-1024x486.png)
 
 双击IP进入配置页面，如下所示：
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-4-1024x741.png)
+![](image-4-1024x741.png)
 
 对部分选项解释一下（详见PG021 AXI DMA P77）
 
@@ -134,7 +134,7 @@ IP Generator -> Create Block Design
 
 经过设置以后，端口减少为以下：
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-6.png)
+![](image-6.png)
 
 下面解释端口含义：
 
@@ -154,17 +154,17 @@ IP Generator -> Create Block Design
 *   使能一个S\_AXI\_ACP或者HP来进行数据高速传输
 *   使能中断
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-7-1024x352.png)
+![](image-7-1024x352.png)
 
 使能ACP
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-8.png)
+![](image-8.png)
 
 使能中断引脚
 
 Run Connection Automation，进行基础连线
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-10-1024x283.png)
+![](image-10-1024x283.png)
 
 可以先来分析一下这个图：红色部分两个AXI Master和Slave之间的连线，通过AXI Interconnect操作Zynq的ACP端口（黄色部分），实现向Zynq读取/写入数据。绿色部分给AXI DMA IP发送操作指令。
 
@@ -172,7 +172,7 @@ Run Connection Automation，进行基础连线
 
 在这里我们接受的是AXI-Stream格式的数据，因此选择AXI Stream Data FIFO。
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-11-1024x452.png)
+![](image-11-1024x452.png)
 
 选择FIFO
 
@@ -180,31 +180,31 @@ Run Connection Automation，进行基础连线
 
 发现现在DMA IP有两个最关键的端口没有链接：S\_AXIS\_S2MM和M\_AXIS\_MM2S，后者是从AXI ACP读到了数据并输出为Stream的端口，因此应该连接到FIFO的S\_AXIS端口，前者则相反。连接完成后，再次运行Connection Automation完成时钟和reset的链接。
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-12-1024x481.png)
+![](image-12-1024x481.png)
 
 添加FIFO的连线
 
 为了方便观测信号，设置一个调试模块ILA，搜索ILA，实例化一个System ILA
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-13-1024x565.png)
+![](image-13-1024x565.png)
 
 ILA
 
 我们需要对ILA核进行一些配置来让他可以检测AXI-STREAM协议。双击IP核，首先将端口调整为两个，同时观测FIFO的输入和输出。
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-14-1024x510.png)
+![](image-14-1024x510.png)
 
 调整ILA参数
 
 进入Interface Options，修改端口种类为 xilinx.com:interface:axis rtl:1.0 来检测AXI-Stream协议。对于SLOT2同理。接着将ILA连接到FIFO两端进行监控。接下来Run Connection Automation让Vivado完成接下来的连接。
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-15-1024x428.png)
+![](image-15-1024x428.png)
 
 最终的Block Design
 
 差点忘了一步：整合中断，在这里DMA有两个中断端口，增加一个Concat IP核来拼接这两个中断并连接到Zynq的中断控制端口上去。（虽然本实验暂时用不到中断）
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-25-1024x306.png)
+![](image-25-1024x306.png)
 
 中断传输
 
@@ -212,7 +212,7 @@ ILA
 
 进行综合布线，生成比特流，生成后导出硬件描述文件（.xsa）以便进行Vitis IDE开发。
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-16.png)
+![](image-16.png)
 
 导出xsa
 
@@ -221,7 +221,7 @@ ILA
 
 按照正常方式进行Vitis项目创建，New一个Application Project，选择刚刚导出的xsa文件。后面全部默认，生成一个hello world示例工程。
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-17-1024x634.png)
+![](image-17-1024x634.png)
 
 选择描述文件
 
@@ -391,11 +391,11 @@ return XST_SUCCESS;
 
 在运行之前，建议先进行一下Run Configuration
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-18.png)
+![](image-18.png)
 
 Run Configuration
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-19-1024x643.png)
+![](image-19-1024x643.png)
 
 确保Reset和Program关闭
 
@@ -410,14 +410,14 @@ Run Configuration
 
 设置如下的Trigger：
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-20.png)
+![](image-20.png)
 
 *   TREADY信号在数据准备好进行传输的时候置1，因此在FIFO出端进行监听
 *   TVALID信号在数据准备好接受时置1，因此在FIFO入端进行监听
 
 点击Run Trigger的按钮，再利用Vitis进行数据烧录。
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-21.png)
+![](image-21.png)
 
 对PS进行编程
 
@@ -425,7 +425,7 @@ Vivado ILA成功触发并画出数据：
 
 简单分析一下传输数据：
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-23-1024x442.png)
+![](image-23-1024x442.png)
 
 传输数据
 
@@ -435,7 +435,7 @@ Vivado ILA成功触发并画出数据：
 
 接着来分析一下传输的数据内容。在Vitis IDE里面设置了初始值为(u8)0xC，以后每个8位数+1，因此传输内容应该为00001100 00001101 00001102 ... 事实上为：
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-24.png)
+![](image-24.png)
 
 传输的数据内容
 

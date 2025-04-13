@@ -47,29 +47,29 @@ $ gcc -o test -m32 -fno-stack-protector -no-pie test.c
 **需要关闭栈溢出保护和PIE，否则无法进行**
 首先利用`readelf`查看段地址：`readelf -S test`
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/1.png)
+![](1.png)
 
 可以看到有TYPE为REL的两个项，`.rel.plt`（用于函数重定位） 和 `.rel.dyn`（用于变量重定位） 。其内部信息可以用`readelf -r test`来查看
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/2.png)
+![](2.png)
 
 下面从`main`函数入手，看看执行的`glibc`的`write`函数过程都发生了什么（利用`gdb-peda`）
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/3.png)
+![](3.png)
 
 以`write`函数为例，可以看见调用的时候实际上到了`0x8049070`,由上面的段列表比对可以看到，目标在`.plt`段内，先跳到了plt表。继续跟踪
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/4.png)
+![](4.png)
 
 该函数跳到了`0x804c01c`，位于`.got.plt`内，其内容为
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/5.png)
+![](5.png)
 
 回到了`0x8049076`，实际上是上上面那张图的`push 0x20`内，接着那张图的往下走，jump到了`0x8049020`,位于`plt[0]`。
 
 `plt[0]`处的指令为
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/6.png)
+![](6.png)
 
 由第一张图知道，`0x804c000`是GOT表，这些指令先是push了GOT\[1\]，再跳转了GOT\[2\]
 
@@ -195,13 +195,13 @@ typedef struct
 
 在第一张图里知道`.dynsym`基地址`0x804820c`，加上6的偏移就是`0x804820c+0x10*6` 得到：
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/7.png)
+![](7.png)
 
 （`.dynsym`以`\x00`作为开始和结尾，中间每个字符串也以`\x00`间隔，因此会有中间两个`0x0000`，很重要，伪造的时候不要忘记）
 
 就是说`st_name`是`0x0000042`，由`Elf32_Sym`的注释可知这也是在`.dynstr(0x80482ac)`的偏移值，我们查看一下`0x80482ac+0x42`
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/8.png)
+![](8.png)
 
 就是`write`的名字，接下来送到`_dl_lookup_symbol_x`去找真正的函数，但这部分过程我们已经不关心了。
 
@@ -231,7 +231,7 @@ typedef struct
 
 假设有一个程序有栈溢出漏洞，堆栈是这样的：
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/1-1.png)
+![](1-1.png)
 
 在程序call之后，本质上是进行了
 
@@ -243,27 +243,27 @@ ret
 
 `mov`执行完以后:
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/2-1.png)
+![](2-1.png)
 
 再来是`pop ebp`；此时ebp内的值就是esp处的`fake_ebp1_addr`，esp在pop后下移。
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/3-1.png)
+![](3-1.png)
 
 然后进行`ret`，将eip设置为esp现在所指的`read_plt`。在`read_plt`里放了`glibc`的`read`函数的地址，系统开始执行新的`read`函数。`read`函数的参数为栈内`leave ret`下面的`0，fake_ebp1，0x100` 代表向`fake_ebp1`读100字节。
 
 写入的内容不是乱写的，就是我们的payload2，为了实现栈迁移，我们需要将`.bss`段`fake_ebp1`位置内写入`fake_ebp2`的地址，其他地方随意构造我们需要的数据，这部分我们都能利用
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/4-1.png)
+![](4-1.png)
 
 `read`函数执行完以后回到左侧`read_plt`下面的`leave_ret`，会将一开始的过程再执行一遍：
 
 首先是`mov esp,ebp`;
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/5-1.png)
+![](5-1.png)
 
 `pop ebp`
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/6-1.png)
+![](6-1.png)
 
 这句话将ebp放到了`fake_ebp2`处，此时esp在`system_plt`上，此后在执行`ret`，我们构造的函数在`.bss`就被执行了，栈迁移也就实现了。
 
@@ -275,11 +275,11 @@ ret
 
 `pattern_create 120`
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/1-2.png)
+![](1-2.png)
 
 输入r，gdb开始运行，将生成的pattern当作输入输入进去。
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/2-2.png)
+![](2-2.png)
 
 程序崩溃，发现eip值为：0x41384141
 
@@ -287,13 +287,13 @@ ret
 
 即可得出移除偏移在112处。
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/3-2.png)
+![](3-2.png)
 
 此外，通过ROPgadget，我们也可以很清楚的定位到需要的return gadget。
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/4-2.png)
+![](4-2.png)
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/5-2.png)
+![](5-2.png)
 
 ```
 from pwn import *
@@ -348,7 +348,7 @@ r.interactive()
 
 和“栈迁移原理”一部分介绍的一样，我们先通过`read`构造在`.bss`段的栈，其内容由`payload2`决定，在这里我们直接传入了`write_plt`的地址，会直接调用`write`函数并取指定buffer内容输出，结果如下：
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/1-3.png)
+![](1-3.png)
 
 ## 步骤2：截获reloc\_offset
 
@@ -358,7 +358,7 @@ r.interactive()
 
 write的offset是多少？上面已经说到了，是push进去的`0x20`。
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/2-3.png)
+![](2-3.png)
 
 ```
 ...
@@ -384,7 +384,7 @@ r.interactive()
 
 结果仍然是打印出`/bin/sh`
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/3-3.png)
+![](3-3.png)
 
 ## 步骤3：伪造reloc\_offset，从而伪造reloc
 
@@ -417,7 +417,7 @@ typedef struct {
 
 组装一下，假的`reloc`就是`p32(write_got) + p32(r_info)`，其中`r_info`就是我们在途中看到的`0x607`。
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/1-4.png)
+![](1-4.png)
 
 ```
 ...
@@ -448,7 +448,7 @@ r.interactive()
 
 执行后，和上面的结果一样，输出了`/bin/sh`。
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/2-4.png)
+![](2-4.png)
 
 ## 步骤4：伪造reloc的r\_offset，从而伪造sym
 
@@ -481,7 +481,7 @@ typedef struct
 
 前面我们在最后分析的时候，看到的`sym`是这样的：
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/1-5.png)
+![](1-5.png)
 
 所以我们暂时不改变它，照样写回去，这里的`0x42`就是`st_name`在`dynstr`的`offset`,`0x12`就是`type`。在这里我们只关注`name`和`type`，其他的用什么补齐不重要。
 
@@ -524,7 +524,7 @@ r.interactive()
 
 最终，也是成功打印出了`/bin/sh`，证明我们伪造正确。
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/2-5.png)
+![](2-5.png)
 
 ## 步骤5：伪造st\_name，从而伪造函数符号
 
@@ -575,7 +575,7 @@ r.interactive()
 
 结果如下：
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/1-6.png)
+![](1-6.png)
 
 ## 步骤6：伪造dynstr查到的值，链接进system
 
@@ -625,7 +625,7 @@ r.interactive()
 
 最终，我们拿到了一个shell。
 
-![](https://lgyserver.top/wp-content/uploads/2022/04/1-7.png)
+![](1-7.png)
 
 [return2dlresolve](https://lgyserver.top/wp-content/uploads/2022/04/return2dlresolve.pdf)[下载](https://lgyserver.top/wp-content/uploads/2022/04/return2dlresolve.pdf)
 

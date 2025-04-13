@@ -44,7 +44,7 @@ S2MM通道的配置类似：
 
 在SG模式下，AXI DMA控制寄存器映射有所不同，如下表所示
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-29.png)
+![](image-29.png)
 
 AXI DMA Register Map
 
@@ -52,7 +52,7 @@ AXI DMA Register Map
 
 PG021第38页详细介绍了描述符内容。描述符由 8 个 32 位基本字和 0 或 5 个用户应用字组成。最大支持64位地址，通过帧开始和帧结束标志支持每个数据包的多个描述符。 还包括已完成状态和完成时中断。 缓冲区长度可以描述每个描述符最多 8,388,607 字节的数据缓冲区。 两个数据传输方向 MM2S 和 S2MM 需要两个描述符链。
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-26.png)
+![](image-26.png)
 
 BD组成
 
@@ -60,7 +60,7 @@ BD组成
 
 最重要的Control和Status字段，先来看MM2S的BD的CONTROL
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-27.png)
+![](image-27.png)
 
 MM2S\_CONTROL
 
@@ -70,7 +70,7 @@ MM2S\_CONTROL
 
 **RSVD**是保留部分，置0。
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-28.png)
+![](image-28.png)
 
 MM2S\_STATUS
 
@@ -92,7 +92,7 @@ Cmplt 完成标志 DMA已经完成相关传输时设定=1
 
 大体的设计和上篇文章中一样，唯一的区别是在AXI DMA的block design中需要将Scatter/Gather Mode打开。
 
-![](https://lgyserver.top/wp-content/uploads/2022/03/image-30-1024x741.png)
+![](image-30-1024x741.png)
 
 ip核设置
 

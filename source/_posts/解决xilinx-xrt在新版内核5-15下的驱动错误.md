@@ -133,7 +133,7 @@ _keyboard\_arrow\_down_
 
 按照上述修改后可以重新构建所需的驱动模块，识别Xilinx的加速卡
 
-![](https://lgyserver.top/wp-content/uploads/2023/07/image-1024x524.png)
+![](image-1024x524.png)
 
 平台烧写也正常。
 

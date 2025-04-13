@@ -37,17 +37,17 @@ rootfs又叫根文件系统，是Linux启动后挂载的第一个文件系统，
 
 插入电源、USB-UART连接线、SD卡，有显示器和键盘啥的也可以插上。**调整ZCU102上的SW6开关**到下图所示（来自UG1182官方文档，尤其注意官方文档的Pins序号是\[4:1\]不是\[1:4\]...当时坑死我了调了半天）
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/Dingtalk_20220802100823.jpg)
+![](Dingtalk_20220802100823.jpg)
 
 官方手册的指示
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/2.jpg)
+![](2.jpg)
 
 实际位置
 
 将UART连接到电脑（前提是装好CP210X串口芯片的驱动）后可以看到端口多了4个，打开Interface 0（波特率115200，8位数据，1位停止，无校验位），打开电源，看看有没有串口信息打印出来。
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/3.jpg)
+![](3.jpg)
 
 串口
 
@@ -55,7 +55,7 @@ rootfs又叫根文件系统，是Linux启动后挂载的第一个文件系统，
 
 下面让我们仔细分析一下启动流程，来方便我们日后用自己的硬件平台替换。
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/fef17dba-24ac-411d-a0a6-a81879078a2c-255x1024.png)
+![](fef17dba-24ac-411d-a0a6-a81879078a2c-255x1024.png)
 
 启动过程
 
@@ -86,7 +86,7 @@ Xilinx在启动时，BootROM会先检测设备模式引脚状态，SD卡启动�
 
 构建该Platform Project
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/屏幕截图-2022-08-02-121425.jpg)
+![](屏幕截图-2022-08-02-121425.jpg)
 
 构建
 
@@ -107,13 +107,13 @@ git checkout <你的套件版本，如xlnx_rel_v2021.2>
 
 在Vitis中，选择Xilinx->Software Repositories，添加刚刚拉取的仓库本地文件夹地址
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/屏幕截图-2022-08-02-122300.jpg)
+![](屏幕截图-2022-08-02-122300.jpg)
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/屏幕截图-2022-08-02-122426.jpg)
+![](屏幕截图-2022-08-02-122426.jpg)
 
 接着，选择Xilinx->Generate Device Tree，选择xsa，并配置导出文件夹。
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/屏幕截图-2022-08-02-122512.jpg)
+![](屏幕截图-2022-08-02-122512.jpg)
 
 生成的文件如图，因为XSA文件仅包含用户定义的IP和Zynq，因此要激活Ethernet网络，需要自己编写设备树，修改其中的system-top.dts来添加Ethernet的PHY（踩坑\*n）同时还需要加入model和compatible字段来让Uboot/Ubuntu正确识别硬件开发板信息、加载驱动程序（再次踩坑）。（参考：https://github.com/Xilinx/u-boot-xlnx/blob/3113b53d8cb1913ef8162cadf45f44ebf2ed9eea/arch/arm/dts/zynqmp-zcu102-revA.dts）
 
@@ -169,7 +169,7 @@ gcc -I my_dts -E -nostdinc -undef -D__DTS__ -x assembler-with-cpp -o system-top.
 dtc -I dts -O dtb -o system-top.dtb system-top.dts.tmp
 ```
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/屏幕截图-2022-08-02-142227.jpg)
+![](屏幕截图-2022-08-02-142227.jpg)
 
 至此，在文件夹内出现设备树文件system-top.dtb，进行保存
 
@@ -190,7 +190,7 @@ make CROSS_COMPILE=aarch64-none-elf- PLAT=zynqmp RESET_TO_BL31=1
 
 现在我们有这些文件：
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/屏幕截图-2022-08-02-143442.jpg)
+![](屏幕截图-2022-08-02-143442.jpg)
 
 把Vivado生成的PL Bitstream也保存到这里，命名为system.bit。接下来，我们新建一个文件，命名为bootgen.bif，内容如下：
 
@@ -291,15 +291,15 @@ sudo snap install snap-store
 
 安装完毕后，输入 xlnx-config -q 可以看见刚刚我们设置的自定义硬件平台
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/屏幕截图-2022-08-02-150223-1024x231.jpg)
+![](屏幕截图-2022-08-02-150223-1024x231.jpg)
 
 使用 sudo xlnx-config -a test\_pac 激活我们刚刚设置的平台，工具会自动打包成boot.bin并放到SD卡命名为boot1020.bin。重启后生效。
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/屏幕截图-2022-08-02-150433.jpg)
+![](屏幕截图-2022-08-02-150433.jpg)
 
 重启后，可以通过xlnx-config -q查看激活的资产
 
-![](https://lgyserver.top/wp-content/uploads/2022/08/屏幕截图-2022-08-02-150752-1024x186.jpg)
+![](屏幕截图-2022-08-02-150752-1024x186.jpg)
 
 ## 参考
 

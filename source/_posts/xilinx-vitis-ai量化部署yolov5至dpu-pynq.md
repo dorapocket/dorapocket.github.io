@@ -122,7 +122,7 @@ docker pull xilinx/vitis-ai-pytorch-cpu:2.5.0
 ./docker_run.sh xilinx/vitis-ai-pytorch-cpu:latest
 ```
 
-![](https://lgyserver.top/wp-content/uploads/2023/05/image.png)
+![](image.png)
 
 Vitis AI
 
@@ -132,9 +132,9 @@ Vitis AI
 
 该部分可参考[UG1414](https://docs.xilinx.com/r/zh-CN/ug1414-vitis-ai/%E9%87%8F%E5%8C%96%E6%A8%A1%E5%9E%8B?tocId=ZnikVhMvPGNvx07lbgIiOQ)文档。大体流程如下：
 
-![](https://lgyserver.top/wp-content/uploads/2023/05/image-1.png)
+![](image-1.png)
 
-![](https://lgyserver.top/wp-content/uploads/2023/05/image-2.png)
+![](image-2.png)
 
 首先克隆原始的Yolov5仓库，这里用的是[ultralytics/_yolov5_](https://github.com/ultralytics/yolov5)，虽然[ultralytics/ultralytics](https://github.com/ultralytics/ultralytics)也有yolov5，但因为增加了很多训练trick，导致源代码比较难修改，故采用前者。
 
@@ -309,7 +309,7 @@ if __name__ == '__main__':
 python quantize.py -q calib
 ```
 
-![](https://lgyserver.top/wp-content/uploads/2023/05/image-4-1024x906.png)
+![](image-4-1024x906.png)
 
 关注在此期间产生的Warning，比如未能识别的OP，这都是导致后面需要DPU分子图执行的原因。此时build/quant\_model已经有生成的py了，需要接着运行test来生成xmodel
 
@@ -317,7 +317,7 @@ python quantize.py -q calib
 python quantize.py -q test -b 1
 ```
 
-![](https://lgyserver.top/wp-content/uploads/2023/05/image-5-1024x66.png)
+![](image-5-1024x66.png)
 
 有了这个xmodel，我们需要用xilinx提供的compiler去把这个xmodel编译成DPU支持的，基于XIR的xmodel，运行如下指令：
 
@@ -325,7 +325,7 @@ python quantize.py -q test -b 1
 vai_c_xir -x ./build/quant_model/DetectMultiBackend_int.xmodel -a /opt/vitis_ai/compiler/arch/DPUCZDX8G/KV260/arch.json -o ./ -n my_model
 ```
 
-![](https://lgyserver.top/wp-content/uploads/2023/05/image-6-1024x261.png)
+![](image-6-1024x261.png)
 
 没有vai\_c\_xir?
 
@@ -340,7 +340,7 @@ _keyboard\_arrow\_down_
 
 我采用了自己训练的12分类的yolov5n模型，观察upload节点的输入如下图：
 
-![](https://lgyserver.top/wp-content/uploads/2023/05/image-7.png)
+![](image-7.png)
 
 也就是说，输入图片是一个xint8的定点数，小数点在第6位，size是1\*960\*960\*3。
 
@@ -443,7 +443,7 @@ image = input_data[0]
 
 在netron中，DPU计算后输出的outputTensors表示为**download**节点的数据类型，不是最后节点中的fix2float后的类型，这一步需要在cpu上自己做，如下图。
 
-![](https://lgyserver.top/wp-content/uploads/2023/06/image.png)
+![](image.png)
 
 download节点
 
@@ -511,7 +511,7 @@ pred = [conv_out0, conv_out1, conv_out2]
 
 在上面的代码中 从output\_data拿出数据以后先进行了反量化，至于为什么/4，和量化的时候一样
 
-![](https://lgyserver.top/wp-content/uploads/2023/06/image-1.png)
+![](image-1.png)
 
 download节点信息
 
