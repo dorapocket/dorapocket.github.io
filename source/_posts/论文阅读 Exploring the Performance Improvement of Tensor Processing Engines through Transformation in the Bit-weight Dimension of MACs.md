@@ -21,14 +21,10 @@ Qizhe Wu1, Huawen Liang1, Yuchen Gui1, Zhichen Zeng1,3, Zerong He1, Linfeng Tao1
 
 类似于竖式，通过位乘法+移位实现
 
-![](1.png)
-
-![](2.png)
+![](1.png)![](2.png)
 
 **常见的MAC计算原理和分析**
-![](3.png)
-
-![](4.png)
+![](3.png)![](4.png)
 
 基于MM的计算阵列架构：2Dmatrix, weight stationary / output stationary systolic array， 3D-Cube.
 
@@ -97,7 +93,7 @@ $$C_{m,n}=\sum_{k=0}^{K-1}A_{m,k}B_{k,n}=\sum_{k=0}^{K-1}\sum_{bw=0}^{BW-1}SubA_
 
 ### Reduction under the Same Bit-weight (OPT2)
 
-![](9.png)
+![](9p.png)![](9.png)
 
 根据建模中有关GEMM的分析，我们可以很清楚的得到
 
@@ -113,9 +109,7 @@ $$C_{m,n}=\sum_{k=0}^{K-1}A_{m,k}B_{k,n}=\sum_{k=0}^{K-1}\sum_{bw=0}^{BW-1}SubA_
 
 ### Acceleration with the Sparsity of Encoding (OPT3)
 
-![](11.png)
-
-![](12.png)
+![](11.png)![](12.png)
 
 ![](13.png)
 
@@ -131,9 +125,7 @@ $$C_{m,n}=\sum_{k=0}^{K-1}A_{m,k}B_{k,n}=\sum_{k=0}^{K-1}\sum_{bw=0}^{BW-1}SubA_
 
 ### Extracted and Shared Encoder (OPT4C and OPT4E)
 
-![](14.png)
-
-![](15.png)
+![](14.png)![](15.png)![](15p.png)
 
 主要思想是重新排列 NP 和 KP 的顺序，并将“encode”和“sparse”环节移到 NP 维度的外层来节省编码环节的开销。由于操作数 A 是在PE 列广播的，每列中的 PE 可以共享相同的encoder和sparse encoder。
 
@@ -187,13 +179,9 @@ Innovus + VCS + PrimeTime功耗评估
 
 ### LLM/DNN负载下的测试
 
-![](19.png)
+![](19.png)![](20.png)
 
-![](20.png)
-
-![](21.png)
-
-![](22.png)
+![](21.png)![](22.png)
 
 
 OPT4E提供的吞吐量与受乘数编码后PP的数量和向量的K维度大小有关。
