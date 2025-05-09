@@ -1,7 +1,6 @@
 var code = `
 <script>
-var prev_onload = document.onload;
-document.onload = function(e) {
+setInterval(()=>{
     if (prev_onload) {
         prev_onload(e);
     }
@@ -18,7 +17,7 @@ document.onload = function(e) {
             img.src = img.src.replace("https://lgyserver.top/", "");
         }
     }
-};
+}, 1000);
 </script>`;
 
 hexo.extend.injector.register('body_end', code, 'post');
