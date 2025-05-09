@@ -1,6 +1,6 @@
 var code = `
 <script>
-setInterval(()=>{
+setTimeout(()=>{
     let gis = document.getElementsByClassName("group-image-wrap");
     for (let i = 0; i < gis.length; i++) {
         let gi = gis[i];
