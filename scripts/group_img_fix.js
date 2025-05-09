@@ -1,15 +1,24 @@
 var code = `
 <script>
-let gis = document.getElementsByClassName("group-image-wrap");
-for (let i = 0; i < gis.length; i++) {
-    let gi = gis[i];
-    let img = gi.getElementsByTagName("img")[0];
-    if (img) {
-        console.log("fix group image url", img.parentElement.href, img.src);
-        img.parentElement.href = img.parentElement.href.replace("https://www.lgyserver.top/", "");
-        img.src = img.src.replace("https://www.lgyserver.top/", "");
+var prev_onload = document.onload;
+document.onload = function(e) {
+    if (prev_onload) {
+        prev_onload(e);
     }
-}
+    let gis = document.getElementsByClassName("group-image-wrap");
+    for (let i = 0; i < gis.length; i++) {
+        let gi = gis[i];
+        let img = gi.getElementsByTagName("img")[0];
+        if (img.parentElement && img.parentElement.href) {
+            img.parentElement.href = img.parentElement.href.replace("https://www.lgyserver.top/", "");
+            img.parentElement.href = img.parentElement.href.replace("https://lgyserver.top/", "");
+        }
+        if (img && img.src) {
+            img.src = img.src.replace("https://www.lgyserver.top/", "");
+            img.src = img.src.replace("https://lgyserver.top/", "");
+        }
+    }
+};
 </script>`;
 
 hexo.extend.injector.register('body_end', code, 'post');
