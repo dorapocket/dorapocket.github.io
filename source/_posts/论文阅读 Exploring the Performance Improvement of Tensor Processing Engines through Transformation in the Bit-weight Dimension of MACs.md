@@ -21,17 +21,17 @@ Qizhe Wu1, Huawen Liang1, Yuchen Gui1, Zhichen Zeng1,3, Zerong He1, Linfeng Tao1
 
 类似于竖式，通过位乘法+移位实现
 
-<center class="half">
-    <img src="1.png" width="400"/>
-    <img src="2.png" width="400"/>
-</center>
+{% gi 2 2 %}
+![](1.png)
+![](2.png)
+{% endgi %}
 
 **常见的MAC计算原理和分析**
 
-<center class="half">
-    <img src="3.png"/>
-    <img src="4.png"/>
-</center>
+{% gi 2 2 %}
+![](3.png)
+![](4.png)
+{% endgi %}
 
 基于MM的计算阵列架构：2Dmatrix, weight stationary / output stationary systolic array， 3D-Cube.
 
@@ -100,10 +100,10 @@ $$C_{m,n}=\sum_{k=0}^{K-1}A_{m,k}B_{k,n}=\sum_{k=0}^{K-1}\sum_{bw=0}^{BW-1}SubA_
 
 ### Reduction under the Same Bit-weight (OPT2)
 
-<center class="half">
-    <img src="9p.png"/>
-    <img src="9.png"/>
-</center>
+{% gi 2 2 %}
+![](9p.png)
+![](9.png)
+{% endgi%}
 
 根据建模中有关GEMM的分析，我们可以很清楚的得到
 
@@ -119,10 +119,10 @@ $$C_{m,n}=\sum_{k=0}^{K-1}A_{m,k}B_{k,n}=\sum_{k=0}^{K-1}\sum_{bw=0}^{BW-1}SubA_
 
 ### Acceleration with the Sparsity of Encoding (OPT3)
 
-<center class="half">
-    <img src="11.png"/>
-    <img src="12.png"/>
-</center>
+{% gi 2 2 %}
+![](11.png)
+![](12.png)
+{% endgi %}
 
 ![](13.png)
 
@@ -138,11 +138,11 @@ $$C_{m,n}=\sum_{k=0}^{K-1}A_{m,k}B_{k,n}=\sum_{k=0}^{K-1}\sum_{bw=0}^{BW-1}SubA_
 
 ### Extracted and Shared Encoder (OPT4C and OPT4E)
 
-<center class="half">
-    <img src="14.png" width="300"/>
-    <img src="15.png" width="300"/>
-    <img src="15p.png" width="300"/>
-<center>
+{% gi 3 3 %}
+![](14.png)
+![](15.png)
+![](15p.png)
+{% endgi %}
 
 主要思想是重新排列 NP 和 KP 的顺序，并将“encode”和“sparse”环节移到 NP 维度的外层来节省编码环节的开销。由于操作数 A 是在PE 列广播的，每列中的 PE 可以共享相同的encoder和sparse encoder。
 
@@ -196,15 +196,12 @@ Innovus + VCS + PrimeTime功耗评估
 
 ### LLM/DNN负载下的测试
 
-<center class="half">
-    <img src="19.png" width="400"/>
-    <img src="20.png" width="400"/>
-</center>
-
-<center class="half">
-    <img src="21.png"/>
-    <img src="22.png"/>
-</center>
+{% gi 4 2-2 %}
+![](19.png)
+![](20.png)
+![](21.png)
+![](22.png)
+{% endgi %}
 
 OPT4E提供的吞吐量与受乘数编码后PP的数量和向量的K维度大小有关。
 
