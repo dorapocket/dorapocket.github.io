@@ -41,9 +41,25 @@ MHA的思路就是用多个W矩阵来转换原始输入X，从而得到多个QKV
 每个Attention Head都会输出大小为$L \times d$的结果，拼起来变成$L \times (d\cdot head\_num)$, 为了等效输出的矩阵大小，再乘以一个$(d\cdot head\_num) \times d$的矩阵,产生$L \times d$的结果给FFN。
 
 这几种变体主要是为了节约显存，比如MQA可以把KVCache降到MHA的$\frac{1}{head\_num}$. GQA根据分组数的不同可以特化到MHA/MQA。
+
+## MoE
+类似于前面的MQA，只不过这次变化的不是QKV矩阵，而是FFN
+![alt text](image-7.png)
+会有一个router，也是一个分类器件，用来决定当前输入应该分配到哪个FFN中，每个FFN就是一个Expert。专家是对token分的，不同token会被分到不同专家，一个token也可以分到多个专家。专家可以是FFN也可以是其他结构。
+- 更快的预训练速度和推理速度
+- 显存需求大
+- 微调阶段泛化能力容易不足
+
+[参考资料](https://huggingface.co/blog/zh/moe)
+
 ## Sparse Attention（cp3）
+即限制了上下文长度的attention，如下图：
+![alt text](image-6.png)
+每一行深色的代表当前token，稍微浅色的代表能关注的token。B中strided的sparse最大能观测到该token的前N个，而fixed则是限制了每段固定能观测到多少。
+
 ## Sliding Window Attention
-## RoPE
+## RoPE (Positional Embeddings)
+是位置编码的一种。传统的位置编码是一种绝对分配，根据标记位置经过函数或者学习方法分配对应的位置嵌入。
 
 
 

@@ -1,0 +1,1 @@
+CTA就是Thread Block的另一种名字。
