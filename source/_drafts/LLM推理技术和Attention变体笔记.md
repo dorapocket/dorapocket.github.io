@@ -42,6 +42,12 @@ MHA的思路就是用多个W矩阵来转换原始输入X，从而得到多个QKV
 
 这几种变体主要是为了节约显存，比如MQA可以把KVCache降到MHA的$\frac{1}{head\_num}$. GQA根据分组数的不同可以特化到MHA/MQA。
 
+## MLA
+See https://www.cnblogs.com/rossiXYZ/p/18827618#23-%E8%A7%A3%E8%80%A6rope
+![MLA](image-8.png)
+![MLA-2](image-9.png)
+
+
 ## MoE
 类似于前面的MQA，只不过这次变化的不是QKV矩阵，而是FFN
 ![alt text](image-7.png)
